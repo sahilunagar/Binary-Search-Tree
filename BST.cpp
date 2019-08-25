@@ -39,7 +39,38 @@ class BST{
             else parent->right = node;
         }
     }
-    void bredthFirstTraverse(){
+    void Delete(int val){
+        root = DeleteRec(root, val);
+    }
+    BstNode* DeleteRec(BstNode* root, int val){
+        if(root == NULL) return root;
+        else if(val < root->data) root->left = DeleteRec(root->left, val);
+        else if(val > root->data) root->right = DeleteRec(root->right, val);
+        else{
+            if(root->left == NULL && root->right == NULL){
+                delete root;
+                root = NULL;
+            } 
+            else if(root->left == NULL){
+                BstNode* temp = root;
+                root = root->right;
+                delete temp;
+            }
+            else if(root->right == NULL){
+                BstNode* temp = root;
+                root = root->left;
+                delete temp;
+            }
+            else{
+                BstNode* temp = root->right;
+                while(temp->left != NULL) temp = temp->left;
+                root->data = temp->data;
+                root->right = DeleteRec(root->right, temp->data);
+            }
+        }
+        return root;
+    }
+    void breadthFirstTraverse(){
         if(root == NULL) return;
 
         queue<BstNode*> Q;
@@ -116,37 +147,6 @@ class BST{
             return true;
         return false;
     }
-    void Delete(int val){
-        root = DeleteRec(root, val);
-    }
-    BstNode* DeleteRec(BstNode* root, int val){
-        if(root == NULL) return root;
-        else if(val < root->data) root->left = DeleteRec(root->left, val);
-        else if(val > root->data) root->right = DeleteRec(root->right, val);
-        else{
-            if(root->left == NULL && root->right == NULL){
-                delete root;
-                root = NULL;
-            } 
-            else if(root->left == NULL){
-                BstNode* temp = root;
-                root = root->right;
-                delete temp;
-            }
-            else if(root->right == NULL){
-                BstNode* temp = root;
-                root = root->left;
-                delete temp;
-            }
-            else{
-                BstNode* temp = root->right;
-                while(temp->left != NULL) temp = temp->left;
-                root->data = temp->data;
-                root->right = DeleteRec(root->right, temp->data);
-            }
-        }
-        return root;
-    }
     int inorderSuccessor(int val){
         BstNode* current = root;
         while(current->data != val && current != NULL){
@@ -191,7 +191,7 @@ int main(){
 
     //Traversal
     cout << "Level order(Bredth first): ";
-    b.bredthFirstTraverse();
+    b.breadthFirstTraverse();
     cout << "\nInorder: ";
     b.inOrderTraverse();
     cout << "\nPreorder: ";
